@@ -1,0 +1,100 @@
+{
+  "nenri": {
+    "banfi": "danlu",
+    "respa": "danlu",
+    "curnu": "danlu",
+    "since🐍": "respa",
+    "cinki": "danlu",
+    "bifce": "cinki",
+    "civla": "cinki",
+    "jalra": "cinki",
+    "jukni": "cinki",
+    "manti🐜": "cinki",
+    "sfani": "cinki",
+    "toldi🦋": "cinki",
+    "cipna": "danlu",
+    "datka🦆": "cipna",
+    "gunse": "cipna",
+    "jipci🐓": "cipna",
+    "xruki🦃": "cipna",
+    "finpe": "danlu",
+    "mabru": "danlu",
+    "tirxu🐅": "mlatu🐈",
+    "cinfo🦁": "mlatu🐈",
+    "mlatu🐈": "mabru",
+    "labno🐺": "gerku🐕",
+    "gerku🐕": "mabru",
+    "lorxu": "mabru",
+    "cribe": "mabru",
+    "ractu🐇": "mabru",
+    "xanto🐘": "mabru",
+    "xarju🐖": "mabru",
+    "mirli": "mabru",
+    "smani🐒": "mabru",
+    "remna": "smani🐒",
+    "bakni🐄": "mabru",
+    "xirma🐎": "mabru",
+    "kumte": "mabru",
+    "xasli": "mabru",
+    "smacu🐁": "mabru",
+    "ratcu🐀": "mabru",
+    "tricu": "spati",
+    "cindu": "tricu",
+    "ckunu🌲": "tricu",
+    "gurni": "spati",
+    "bavmi": "gurni",
+    "cunmi": "gurni",
+    "mavji": "gurni",
+    "maxri": "gurni",
+    "mraji": "gurni",
+    "rismi🌾": "gurni",
+    "sobde": "gurni",
+    "sorgu": "gurni",
+    "zumri": "gurni",
+    "latna": "spati",
+    "rozgu🌹": "spati",
+    "tujli🌷": "spati",
+    "xruba": "spati",
+    "solri☀️": "tarci",
+    "lunra🌙": "mluni",
+    "terdi🌍": "plini",
+    "ve tavla": "bangu"
+  },
+  "du": {
+    "se mluni": "plini",
+    "se lunra🌙": "plini",
+    "se plini": "tarci",
+    "se gerna": "bangu",
+    "te valsi": "bangu",
+    "ve cmavo": "bangu"
+  },
+  "bridi": {
+    "lunra🌙": [
+      [
+        1
+      ]
+    ],
+    "plini": [
+      [
+        1
+      ]
+    ],
+    "mluni": [
+      [
+        1
+      ]
+    ],
+    "gerna": [
+      [
+        1
+      ],
+      [
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ]
+  }
+}
