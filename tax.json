@@ -66,7 +66,9 @@
     "se plini": "tarci",
     "se gerna": "bangu",
     "te valsi": "bangu",
-    "ve cmavo": "bangu"
+    "ve cmavo": "bangu",
+    "se xamsi": "plini",
+    "se vacri": "plini"
   },
   "bridi": {
     "lunra🌙": [
@@ -93,6 +95,16 @@
       ],
       [
         0,
+        1
+      ]
+    ],
+    "xamsi": [
+      [
+        1
+      ]
+    ],
+    "vacri": [
+      [
         1
       ]
     ]
