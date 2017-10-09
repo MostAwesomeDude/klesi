@@ -28,11 +28,12 @@ def edges_from($vertex): edges_on(sources; $vertex);
 def edges_to($vertex): edges_on(targets; $vertex);
 def homs($source; $target): . as $cat | edges_from($source) |
     intersect($cat | edges_to($target));
+def id_arrow($vertex): verts | fetch($vertex) | map({key: ., value: .}) |
+    from_entries;
 
-# XXX factor!
 def compose_path($path): . as $cat | $path | if length > 0
-    then (first as $f | $cat | range_of($f) | map({key: ., value: .}) |
-          from_entries) as $head |
+    then (first as $f | $cat | source($f) as $vertex | id_arrow($vertex))
+           as $head |
         reduce (map(. as $edge | $cat | edges | fetch($edge)) | .[]) as $acc
             ($head; compose_arrows(.; $acc))
     else null end;
