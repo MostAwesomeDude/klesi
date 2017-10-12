@@ -47,11 +47,10 @@ def hash_string: reduce (explode | .[]) as $acc (0;
 
 def dot_quote: "\"" + . + "\"";
 def dot_verts: verts | keys | map(dot_quote + " [shape=box];");
-def color_paths: . as $cat | get_paths |
+def color_paths: get_paths |
     map("/dark28/\((.source + .target | hash_string) % 8 + 1)" as $color |
         .edges | flatten | map({key: ., value: [$color]}) | from_entries) |
-    add_objs |
-    with_entries({key: .key,
+    add_objs | with_entries({key: .key,
         value: .value | join(":") | dot_quote | ("color=" + .)});
 
 def dot_edges: . as $cat | color_paths as $colors |
@@ -62,3 +61,37 @@ def dot_edges: . as $cat | color_paths as $colors |
     ($colors | if has($edge) then fetch($edge) else "" end) as $color |
     $source + " -> " + $target + " [edgetooltip=\($tt) \($color)];";
 def dot: ["digraph klesi {", dot_verts, dot_edges, "}"] | flatten | join("\n");
+
+def rsort: sort_by([length, .]) | reverse;
+
+# Apply a single rewrite rule.
+def apply_rule($lhs; $rhs): index($lhs) as $start | if $start then
+    ($lhs | $start + length) as $stop | .[:$start] + $rhs + .[$stop:] else .
+    end;
+def apply_rules($rules): . as $s |
+    reduce $rules as $rule ($s; apply_rule($rule[0]; $rule[1]));
+def rewrite($rules): . as $original | apply_rules($rules) |
+    if . == $original then . else rewrite($rules) end;
+
+def crits: if . == [] then [] else
+    first as [$lhs, $rhs] | .[1:] |
+    map(select(.[0] == $lhs) | [$rhs, .[1]]) + crits
+    end;
+def nontaut: select(.[0] != .[1]);
+def kb($e; $rules): $e | if . == []
+    then $rules | crits | if . == [] then $rules else kb(.; $rules) end
+    else
+        (first | map(rewrite($rules)) | rsort) as [$m, $n] |
+        .[1:] | if $m == $n then kb(.; $rules) else
+            $rules + [[$m, $n]] as $rs |
+            map(map(rewrite($rs)) | nontaut) as $es |
+            $rs | map([.[0], .[1] | rewrite($rs)] | nontaut) | kb($es; . // [])
+            end
+    end;
+def knuth_bendix: kb(.; []);
+
+def initial_rules: if (. | length) < 2 then [] else
+    first as $x | .[1:] | map([$x, .] | rsort) + initial_rules
+    end;
+def solve_paths: get_paths | map(.edges | initial_rules) | flatten(1) |
+    knuth_bendix;

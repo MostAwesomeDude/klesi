@@ -5,5 +5,6 @@ in pkgs.stdenv.mkDerivation {
   name = "typhon-env";
   buildInputs = with pkgs; [
     git jq graphviz gist 
+    tahoelafs
   ];
 }
