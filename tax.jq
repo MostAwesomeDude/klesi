@@ -57,10 +57,15 @@ def build_bridi_graph: to_entries |
 def build_bridi_paths: to_entries |
     map(.) | [] | add;
 
+def build_selska_graph: map(lo) | {vertices: {"lo selska": .}};
+def build_selratni_graph: map(lo) | {vertices: {"lo selratni": .}};
+
 def build_graphs: (.du | build_du_graph) as $du |
+    (.selska | build_selska_graph) as $selska |
+    (.selratni | build_selratni_graph) as $selratni |
     (.nenri | build_nenri_graph) as $nenri |
     (.bridi | build_bridi_graph) as $bridi |
-    [$du, $nenri, $bridi] | add_objs;
+    [$du, $selska, $selratni, $nenri, $bridi] | add_objs;
 def build_paths: (.du | build_du_paths) as $du |
     (.nenri | build_nenri_paths) as $nenri |
     (.bridi | build_bridi_paths) as $bridi |
