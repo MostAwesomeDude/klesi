@@ -1,7 +1,7 @@
 default: jicmu.svg
 
-%-cat.json: %-base.json
+%-cat.json: %-base.json tax.jq
 	<$< jq -f tax.jq >$@
 
-%.svg: %-cat.json
+%.svg: %-cat.json cat.jq
 	<$< jq -r 'include "cat"; dot' | dot -Tsvg >$@

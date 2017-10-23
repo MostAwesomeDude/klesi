@@ -1,4 +1,5 @@
-def add_objs: reduce .[] as $acc ({}; . * $acc);
+def add_objs_with($seed): reduce .[] as $acc ($seed; . * $acc);
+def add_objs: add_objs_with({});
 def enumerate: [keys, .] | transpose;
 
 def lo: "lo " + .;
@@ -11,12 +12,14 @@ def build_arrow_graph($arrow; $source; $target):
         source: {($arrow): $source},
         target: {($arrow): $target}
     };
+def lone_arrow($name; $source; $target):
+    build_arrow_graph(arrow($name; $source; $target); $source; $target);
 
-def build_nenri_graph: to_entries |
-    map((.key | lo) as $from | (.value | lo) as $to |
-        arrow("nenri"; $from; $to) | build_arrow_graph(.; $from; $to)) |
-    add_objs;
-def build_nenri_paths: [];
+def build_selcmi_graph: to_entries |
+    map((.key | lo) as $target | .value | build_selcmi_graph as $rec | keys |
+        map(lone_arrow("cmima"; lo; $target)) |
+            add_objs_with($rec)) | add_objs;
+def build_selcmi_paths: [];
 
 def build_iso_graph($from; $to):
     arrow("du"; $from; $to) as $in |
@@ -61,15 +64,15 @@ def build_selska_graph: map(lo) | {vertices: {"lo selska": .}};
 def build_selratni_graph: map(lo) | {vertices: {"lo selratni": .}};
 
 def build_graphs: (.du | build_du_graph) as $du |
+    (.selcmi | build_selcmi_graph) as $selcmi |
     (.selska | build_selska_graph) as $selska |
     (.selratni | build_selratni_graph) as $selratni |
-    (.nenri | build_nenri_graph) as $nenri |
     (.bridi | build_bridi_graph) as $bridi |
-    [$du, $selska, $selratni, $nenri, $bridi] | add_objs;
+    [$du, $selcmi, $selska, $selratni, $bridi] | add_objs;
 def build_paths: (.du | build_du_paths) as $du |
-    (.nenri | build_nenri_paths) as $nenri |
+    (.selcmi | build_selcmi_paths) as $selcmi |
     (.bridi | build_bridi_paths) as $bridi |
-    [$du, $nenri, $bridi] | add;
+    [$du, $selcmi, $bridi] | add;
 
 build_graphs as $graph | build_paths as $paths |
     {release: 0, compatibility: 0, category: {$graph, $paths}}
