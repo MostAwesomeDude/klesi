@@ -5,7 +5,9 @@ exports (main)
 
 def i :DeepFrozen := ["CMAVO", ["I", "i"]]
 def ku :DeepFrozen := ["CMAVO", ["KU", "ku"]]
-def lohe :DeepFrozen := ["CMAVO", ["LE", "lo'e"]]
+def lohi :DeepFrozen := ["CMAVO", ["LE", "lo'i"]]
+def du :DeepFrozen := ["CMAVO", ["GOhA", "du"]]
+def se :DeepFrozen := ["CMAVO", ["SE", "se"]]
 
 def combine(x, y) as DeepFrozen:
     return if (x =~ m1 :Map && y =~ m2 :Map) {
@@ -60,18 +62,28 @@ def makeCat(objs :Map[Str, List[Str]], arrows :Map[Str, Map[Str, Str]],
             ]
 
 object zbasu as DeepFrozen:
+    to brivla(l :List, ej):
+        return switch (l) {
+            match [=="BRIVLA", [=="gismu", brivla]] { brivla }
+            match [=="tanruUnit2", ==se, [=="BRIVLA", [=="gismu", brivla]]] {
+                `se $brivla`
+            }
+            match ==du { "du" }
+            match _ { throw.eject(ej, `Not brivla: $l`) }
+        }
+
     to sumti(l :List, ej):
         return switch (l) {
-            match [=="sumti6", ==lohe] + b ? (!b.isEmpty()) {
+            match [=="sumti6", ==lohi] + b ? (!b.isEmpty()) {
                 def rv := if (b.last() == ku) { b.slice(0, b.size() - 1) } else { b }
-                [for [=="BRIVLA", [=="gismu", gismu]] in (rv) gismu]
+                [for via (zbasu.brivla) gismu in (rv) gismu]
             }
             match _ { throw.eject(ej, `Not a sumti: $l`) }
         }
 
     to bridiTail(l :List, ej):
         return switch (l) {
-            match [=="bridiTail3", [=="BRIVLA", [=="gismu", brivla]]] + sumtis {
+            match [=="bridiTail3", via (zbasu.brivla) brivla] + sumtis {
                 [brivla, [for s in (sumtis) zbasu.sumti(s, ej)]]
             }
             match _ { throw.eject(ej, `Not a bridi-tail: $l`) }
@@ -82,12 +94,22 @@ object zbasu as DeepFrozen:
             match [via (zbasu.sumti) head, via (zbasu.bridiTail) [selbri, sumtis]] {
                 switch ([selbri, [head] + sumtis]) {
                     match [=="cmima", [x1, x2]] {
-                        def source := `lo'e ${" ".join(x1)}`
-                        def target := `lo'e ${" ".join(x2)}`
+                        def source := `lo'i ${" ".join(x1)}`
+                        def target := `lo'i ${" ".join(x2)}`
                         def edge := `$source ku cmima $target`
                         makeCat([source => [], target => []],
                                 [edge => [].asMap()],
                                 [edge => source], [edge => target], [])
+                    }
+                    match [=="du", [x1, x2]] {
+                        def source := `lo'i ${" ".join(x1)}`
+                        def target := `lo'i ${" ".join(x2)}`
+                        def f := `$source ku du $target`
+                        def g := `$target ku du $source`
+                        makeCat([source => [], target => []],
+                                [f => [].asMap(), g => [].asMap()],
+                                [f => source, g => target],
+                                [f => target, g => source], [])
                     }
                 }
             }

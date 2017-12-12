@@ -1,7 +1,7 @@
 default: jicmu.svg
 
-%.json: %.jbo
+%.json: %.jbo zbasu.mt
 	<$< jbo2json | monte eval zbasu.mt | jq . >$@
 
-%.svg: %.json
-	<$< jq -r 'include "cat"; dot' | tee temp.dot | dot -Tsvg >$@
+%.svg: %.json cat.jq
+	<$< jq -r 'include "cat"; dot' | dot -Tsvg >$@
