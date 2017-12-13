@@ -5,9 +5,11 @@ exports (main)
 
 def i :DeepFrozen := ["CMAVO", ["I", "i"]]
 def ku :DeepFrozen := ["CMAVO", ["KU", "ku"]]
+def lo :DeepFrozen := ["CMAVO", ["LE", "lo"]]
 def lohi :DeepFrozen := ["CMAVO", ["LE", "lo'i"]]
 def du :DeepFrozen := ["CMAVO", ["GOhA", "du"]]
 def se :DeepFrozen := ["CMAVO", ["SE", "se"]]
+def ce :DeepFrozen := ["CMAVO", ["JOI", "ce"]]
 
 def combine(x, y) as DeepFrozen:
     return if (x =~ m1 :Map && y =~ m2 :Map) {
@@ -78,6 +80,18 @@ object zbasu as DeepFrozen:
                 def rv := if (b.last() == ku) { b.slice(0, b.size() - 1) } else { b }
                 [for via (zbasu.brivla) gismu in (rv) gismu]
             }
+            match [=="sumti6", ==lo] + b ? (!b.isEmpty()) {
+                def rv := if (b.last() == ku) { b.slice(0, b.size() - 1) } else { b }
+                [for via (zbasu.brivla) gismu in (rv) gismu]
+            }
+            match [=="sumti2", head, ==ce] + tail {
+                # Skip the {ce} links.
+                var toggle :Bool := false
+                def rv := [for t in (tail) ? (toggle := !toggle) {
+                    zbasu.sumti(t, ej)
+                }]
+                [zbasu.sumti(head, ej)] + rv
+            }
             match _ { throw.eject(ej, `Not a sumti: $l`) }
         }
 
@@ -94,12 +108,20 @@ object zbasu as DeepFrozen:
             match [via (zbasu.sumti) head, via (zbasu.bridiTail) [selbri, sumtis]] {
                 switch ([selbri, [head] + sumtis]) {
                     match [=="cmima", [x1, x2]] {
-                        def source := `lo'i ${" ".join(x1)}`
                         def target := `lo'i ${" ".join(x2)}`
-                        def edge := `$source ku cmima $target`
-                        makeCat([source => [], target => []],
-                                [edge => [].asMap()],
-                                [edge => source], [edge => target], [])
+                        if (x1 =~ l :List) {
+                            def xs := [for pieces in (l) {
+                                `lo ${" ".join(pieces)}`
+                            }]
+                            makeCat([target => xs], [].asMap(),
+                                    [].asMap(), [].asMap(), [])
+                        } else {
+                            def source := `lo'i ${" ".join(x1)}`
+                            def edge := `$source ku cmima $target`
+                            makeCat([source => [], target => []],
+                                    [edge => [].asMap()],
+                                    [edge => source], [edge => target], [])
+                        }
                     }
                     match [=="du", [x1, x2]] {
                         def source := `lo'i ${" ".join(x1)}`
@@ -125,6 +147,7 @@ def paragraph(l :List) as DeepFrozen:
         match [=="paragraph"] + sentences {
             [for s in (sentences) ? (s != i) sentence(s)]
         }
+        match [=="sentence"] + b { [zbasu.bridi(b)] }
     }
 
 def top(l :List) as DeepFrozen:
