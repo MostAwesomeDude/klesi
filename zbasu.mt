@@ -8,7 +8,6 @@ def ku :DeepFrozen := ["CMAVO", ["KU", "ku"]]
 def lo :DeepFrozen := ["CMAVO", ["LE", "lo"]]
 def lohi :DeepFrozen := ["CMAVO", ["LE", "lo'i"]]
 def du :DeepFrozen := ["CMAVO", ["GOhA", "du"]]
-def se :DeepFrozen := ["CMAVO", ["SE", "se"]]
 def ce :DeepFrozen := ["CMAVO", ["JOI", "ce"]]
 
 def combine(x, y) as DeepFrozen:
@@ -67,8 +66,8 @@ object zbasu as DeepFrozen:
     to brivla(l :List, ej):
         return switch (l) {
             match [=="BRIVLA", [=="gismu", brivla]] { brivla }
-            match [=="tanruUnit2", ==se, [=="BRIVLA", [=="gismu", brivla]]] {
-                `se $brivla`
+            match [=="tanruUnit2", [=="CMAVO", [=="SE", se]], via (zbasu.brivla) brivla] {
+                `$se $brivla`
             }
             match ==du { "du" }
             match _ { throw.eject(ej, `Not brivla: $l`) }
@@ -109,8 +108,8 @@ object zbasu as DeepFrozen:
                 switch ([selbri, [head] + sumtis]) {
                     match [=="cmima", [x1, x2]] {
                         def target := `lo'i ${" ".join(x2)}`
-                        if (x1 =~ l :List) {
-                            def xs := [for pieces in (l) {
+                        if (x1[0] =~ _ :List) {
+                            def xs := [for pieces in (x1) {
                                 `lo ${" ".join(pieces)}`
                             }]
                             makeCat([target => xs], [].asMap(),
@@ -128,10 +127,19 @@ object zbasu as DeepFrozen:
                         def target := `lo'i ${" ".join(x2)}`
                         def f := `$source ku du $target`
                         def g := `$target ku du $source`
+                        def facts := [[
+                            => source,
+                            "target" => source,
+                            "edges" => [[], [f, g]],
+                        ],[
+                            "source" => target,
+                            => target,
+                            "edges" => [[], [g, f]],
+                        ]]
                         makeCat([source => [], target => []],
                                 [f => [].asMap(), g => [].asMap()],
                                 [f => source, g => target],
-                                [f => target, g => source], [])
+                                [f => target, g => source], facts)
                     }
                 }
             }
