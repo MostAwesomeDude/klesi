@@ -65,6 +65,7 @@ object zbasu as DeepFrozen:
     to brivla(l :List, ej):
         return switch (l) {
             match [=="BRIVLA", [=="gismu", brivla]] { brivla }
+            match [=="BRIVLA", [=="lujvo", brivla]] { brivla }
             match [=="tanruUnit2", [=="CMAVO", [=="SE", se]], via (zbasu.brivla) brivla] {
                 `$se $brivla`
             }
@@ -107,19 +108,19 @@ object zbasu as DeepFrozen:
                 switch ([selbri, [head] + sumtis]) {
                     match [=="cmima", [x1, x2]] {
                         def target := `lo'i ${" ".join(x2)}`
-                        if (x1[0] =~ _ :List) {
-                            def xs := [for pieces in (x1) {
-                                `lo ${" ".join(pieces)}`
-                            }]
-                            makeCat([target => xs], [].asMap(),
-                                    [].asMap(), [].asMap(), [])
-                        } else {
-                            def source := `lo'i ${" ".join(x1)}`
-                            def edge := `$source ku cmima $target`
-                            makeCat([source => [], target => []],
-                                    [edge => [].asMap()],
-                                    [edge => source], [edge => target], [])
-                        }
+                        def xs := [for pieces in (x1) {
+                            `lo ${" ".join(pieces)}`
+                        }]
+                        makeCat([target => xs], [].asMap(),
+                                [].asMap(), [].asMap(), [])
+                    }
+                    match [=="selcmipau", [x1, x2]] {
+                        def target := `lo'i ${" ".join(x2)}`
+                        def source := `lo'i ${" ".join(x1)}`
+                        def edge := `$source ku selcmipau $target`
+                        makeCat([source => [], target => []],
+                                [edge => [].asMap()],
+                                [edge => source], [edge => target], [])
                     }
                     match [=="du", [x1, x2]] {
                         def source := `lo'i ${" ".join(x1)}`
