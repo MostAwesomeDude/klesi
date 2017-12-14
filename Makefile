@@ -6,4 +6,4 @@ default: jicmu.svg
 jbos := $(patsubst %.jbo,%.json,$(wildcard jicmu/*.jbo))
 
 jicmu.svg: $(jbos) cat.jq zbasu.mt
-	monte eval zbasu.mt jicmu/*.json | jq -r 'include "cat"; dot' | dot -Tsvg >$@
+	monte eval zbasu.mt $(jbos) | jq -r 'include "cat"; dot' | dot -Tsvg >$@
