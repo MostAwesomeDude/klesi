@@ -1,6 +1,5 @@
 import "lib/codec/utf8" =~ [=> UTF8 :DeepFrozen]
 import "lib/json" =~ [=> JSON :DeepFrozen]
-import "lib/streams" =~ [=> collectBytes :DeepFrozen]
 exports (main)
 
 def i :DeepFrozen := ["CMAVO", ["I", "i"]]
@@ -167,14 +166,20 @@ def top(l :List) as DeepFrozen:
         }
     }
 
-def main(_argv, => stdio) as DeepFrozen:
-    def bs := collectBytes(stdio.stdin())
-    return when (bs) ->
-        def data := JSON.decode(UTF8.decode(bs, null), null)
-        def [var cat] + cats := top(data)
-        for c in (cats):
-            cat += c
-        def result := cat.freeze()
+def sumCats([var cat] + cats) as DeepFrozen:
+    for c in (cats):
+        cat += c
+    return cat
+
+def catsFromBytes(bs :Bytes) as DeepFrozen:
+    return sumCats(top(JSON.decode(UTF8.decode(bs, null), null)))
+
+def main(argv, => stdio, => makeFileResource) as DeepFrozen:
+    def files := argv.slice(2, argv.size())
+    def bss := [for file in (files) makeFileResource(file)<-getContents()]
+    return when (promiseAllFulfilled(bss)) ->
+        def data := sumCats([for bs in (bss) catsFromBytes(bs)])
+        def result := data.freeze()
         def packed := UTF8.encode(JSON.encode(result, null), null) + b`$\n`
         def stdout := stdio.stdout()
         when (stdout<-(packed), stdout<-complete()) -> { 0 }
