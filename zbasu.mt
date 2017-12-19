@@ -69,6 +69,9 @@ object zbasu as DeepFrozen:
             match [=="tanruUnit2", [=="CMAVO", [=="SE", se]], via (zbasu.brivla) brivla] {
                 `$se $brivla`
             }
+            match [=="tanruUnit2", [=="CMAVO", [=="NU", nu]], via (zbasu.brivla) brivla] {
+                `$nu $brivla`
+            }
             match ==du { "du" }
             match _ { throw.eject(ej, `Not brivla: $l`) }
         }
