@@ -6,5 +6,6 @@ in pkgs.stdenv.mkDerivation {
   buildInputs = with pkgs; [
     git jq graphviz gist xclip
     tahoelafs
+    elmPackages.elm-make elmPackages.elm-package elmPackages.elm-repl
   ];
 }
