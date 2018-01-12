@@ -1,3 +1,6 @@
+import List exposing (isEmpty, length)
+import String exposing (join)
+
 import Html exposing (Html, button, div, text, ul, li)
 import Html.Events exposing (onClick)
 import List.Zipper exposing (Zipper, singleton, toList)
@@ -19,21 +22,30 @@ main = Html.program {
     subscriptions = subscriptions,
     view = view }
 
-type Cat = Id String
-         | Prim String String
-         | Comp Cat Cat
+type Ty = Tuple (List String)
 
-sourceType : Cat -> String
+addTy : Ty -> Ty -> Ty
+addTy (Tuple xs) (Tuple ys) = Tuple (xs ++ ys)
+
+type Cat = Id Ty
+         | Prim String Ty Ty
+         | Comp Cat Cat
+         | Prod Cat Cat
+         -- | Braid [Int]
+
+sourceType : Cat -> Ty
 sourceType cat = case cat of
     Id ty -> ty
-    Prim ty _ -> ty
+    Prim _ ty _ -> ty
     Comp f _ -> sourceType f
+    Prod f g -> addTy (sourceType f) (sourceType g)
 
-targetType : Cat -> String
+targetType : Cat -> Ty
 targetType cat = case cat of
     Id ty -> ty
-    Prim _ ty -> ty
+    Prim _ _ ty -> ty
     Comp _ g -> targetType g
+    Prod f g -> addTy (targetType f) (targetType g)
 
 type Menu = CatMenu Cat
 
@@ -42,7 +54,13 @@ type alias State = (Cat, Maybe Menu)
 type Action = MenuFor Cat
 
 init : (State, Cmd Action)
-init = ((Comp (Prim "lo'i bloti" "lo'i mlatu") (Comp (Id "lo'i mlatu") (Prim "lo'i mlatu" "lo'i se mlatu")), Nothing), Cmd.none)
+init = let
+        unit x = Tuple [x]
+    in ((Prod (Prim "jai se skari" (unit "lo'i bloti") (unit "lo'i se skari"))
+        (Comp (Prim "bloti mlatu" (unit "lo'i bloti") (unit "lo'i mlatu"))
+              (Comp (Id (unit "lo'i mlatu"))
+                    (Prim "mlatu" (unit "lo'i mlatu") (unit "lo'i se mlatu")))),
+             Nothing), Cmd.none)
 
 update : Action -> State -> (State, Cmd Action)
 update (MenuFor cat) (zd, _) = ((zd, Just (CatMenu cat)), Cmd.none)
@@ -53,10 +71,18 @@ subscriptions s = Sub.none
 unorderedList : List (Html a) -> Html a
 unorderedList xs = ul [] (List.map (\x -> li [] [x]) xs)
 
+formatTy : Ty -> String
+formatTy (Tuple xs) = case xs of
+    [x] -> x
+    _ -> join "⊗" xs
+
+lenTy : Ty -> Int
+lenTy (Tuple xs) = length xs
+
 viewMenu : Menu -> Html Action
 viewMenu m = case m of
-    CatMenu cat -> unorderedList [text "cat", text (sourceType cat),
-        text (targetType cat)]
+    CatMenu cat -> unorderedList [text "cat", text (formatTy (sourceType cat)),
+        text (formatTy (targetType cat))]
 
 catGroup : Cat -> String -> List (Svg Action) -> Svg Action
 catGroup cat tt elts = g [onClick (MenuFor cat)] (title [] [text tt] :: elts)
@@ -66,26 +92,32 @@ viewCat cat = let
         -- Build an intermediate SVG fragment.
         -- We return (fragment, width // 64, height // 64)
         go c = case c of
-            Id ty -> (catGroup c ("id : " ++ ty) [line [x1 "0", y1 "1",
+            Id ty -> (catGroup c ("id : " ++ formatTy ty) [line [x1 "0", y1 "1",
                                                         x2 "2", y2 "1"] []],
                                                         2, 2)
-            Prim s t -> (catGroup c ("prim : " ++ s ++ " → " ++ t)
-                         [ line [x1 "0", y1 "1", x2 "0.25", y2 "1"] []
-                         , rect [ x "0.25", y "0"
-                                , width "1.5", height "2"
-                                , rx "0.25", ry "0.25", fill "lightblue"] []
-                         , text_ [ alignmentBaseline "middle"
-                                 , textAnchor "middle"
-                                 , fontFamily "Verdana"
-                                 , strokeWidth "0.02"
-                                 , x "1", y "1", fontSize "0.25", fill "black"] [text "bloti mlatu"]
-                         , line [x1 "1.75", y1 "1", x2 "2", y2 "1"] []
-                         ], 2, 2)
+            Prim name s t -> (catGroup c (name ++ " : " ++ formatTy s ++ " → " ++ formatTy t)
+                              [ line [x1 "0", y1 "1", x2 "0.25", y2 "1"] []
+                              , rect [ x "0.25", y "0.25"
+                                     , width "1.5", height "1.5"
+                                     , rx "0.25", ry "0.25", fill "pink"] []
+                              , text_ [ alignmentBaseline "middle"
+                                      , textAnchor "middle"
+                                      , fontFamily "Verdana"
+                                      , strokeWidth "0.02"
+                                      , x "1", y "1", fontSize "0.2"
+                                      , fill "black"] [text name]
+                              , line [x1 "1.75", y1 "1", x2 "2", y2 "1"] []
+                              ], 2, 2)
             Comp x y -> let
                     (l, lw, lh) = go x
                     (r, rw, rh) = go y
                     tr = g [transform ("translate(" ++ toString lw ++ ")")] [r]
                 in (g [] [l, tr], lw + rw, max lh rh)
+            Prod x y -> let
+                    (t, tw, th) = go x
+                    (b, bw, bh) = go y
+                    tb = g [transform ("translate(0, " ++ toString th ++ ")")] [b]
+                in (g [] [t, tb], max tw bw, th + bh)
         (root, w, h) = go cat
         sw = toString (64 * w + 16)
         sh = toString (64 * h + 16)
