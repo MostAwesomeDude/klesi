@@ -34,6 +34,11 @@ addTy lhs rhs = case (lhs, rhs) of
     (I, Tuple ys) -> Tuple ys
     (Tuple xs, Tuple ys) -> Tuple (xs ++ ys)
 
+lenTy : Ty -> Int
+lenTy ty = case ty of
+    Tuple xs -> length xs
+    I -> 1
+
 type Cat = Id Ty
          | Prim String Ty Ty
          | Comp Cat Cat
@@ -41,15 +46,6 @@ type Cat = Id Ty
          | Braid (List (Int, String))
          | Unit String
          | Counit String
-
--- Look up an element in a list by index, and return the remainder of the
--- list.
-indexing : Int -> List a -> Maybe (a, List a)
-indexing i xs = case xs of
-    x :: tail -> if i == 0 then Just (x, tail) else case indexing (i - 1) tail of
-        Just (y, ys) -> Just (y, x :: ys)
-        Nothing -> Nothing
-    [] -> Nothing
 
 -- Take a position-annotated list and permute it accordingly.
 permute : List (Int, a) -> List a
@@ -84,14 +80,19 @@ type Action = MenuFor Cat
 init : (State, Cmd Action)
 init = let
         unit x = Tuple [x]
+        id x = Id (unit ("lo'i " ++ x))
         bogus = ((Comp (Braid [(1, "lo'i skari"), (0, "lo'i bloti")])
             (Prod
             (Comp (Prim "bloti mlatu" (unit "lo'i bloti") (unit "lo'i mlatu"))
-                  (Comp (Id (unit "lo'i mlatu"))
+                  (Comp (id "mlatu")
                         (Prim "mlatu" (unit "lo'i mlatu") (unit "lo'i se mlatu"))))
             (Prim "skari" (unit "lo'i skari") (unit "lo'i se skari"))),
                  Nothing), Cmd.none)
-        cat = Comp (Unit "lo'i blanu") (Prod (Prim "blanu" (unit "lo'i blanu") I) (Id (unit "lo'i blanu")))
+        bogus2 = Comp (Unit "lo'i blanu") (Prod (Prim "blanu" (unit "lo'i blanu") I) (id "blanu"))
+        gismu g ts = Prim g (unit ("lo'i " ++ g)) (Tuple ts)
+        tavla = gismu "tavla" ["lo'i se tavla", "lo'i te tavla", "lo'i bangu"]
+        bangu = gismu "bangu" ["lo'i se bangu", "lo'i te bangu"]
+        cat = Comp tavla (Prod (Prod (id "se tavla") (id "te tavla")) bangu)
     in ((cat, Nothing), Cmd.none)
 
 update : Action -> State -> (State, Cmd Action)
@@ -111,8 +112,10 @@ formatTy ty = case ty of
 
 viewMenu : Menu -> Html Action
 viewMenu m = case m of
-    CatMenu cat -> unorderedList [text "cat", text (formatTy (sourceType cat)),
-        text (formatTy (targetType cat))]
+    CatMenu cat -> unorderedList [ text "cat"
+                                 , text (formatTy (sourceType cat))
+                                 , text (formatTy (targetType cat))
+                                 ]
 
 catGroup : Cat -> String -> List (Svg Action) -> Svg Action
 catGroup cat tt elts = let
@@ -134,28 +137,31 @@ hline x1 x2 y = makeLine x1 y x2 y
 viewCat : Cat -> Html Action
 viewCat cat = let
         -- Build an intermediate SVG fragment.
-        -- We return (fragment, width // 64, height // 64)
+        -- We return (fragment, width, height) in small tiles.
         go c = case c of
             Id ty -> case ty of
                 I -> (text "", 0, 0)
                 _ -> (catGroup c "id" [hline 0 2 1], 2, 2)
-            Prim name s t -> (catGroup c name
+            Prim name s t -> let
+                    h = max (lenTy s) (lenTy t)
+                    lineAt x1 x2 i _ = hline x1 x2 (toFloat i * 2 + 1)
+                in (catGroup c name
                               [ case s of
                                   I -> text ""
-                                  _ -> hline 0 0.25 1
+                                  Tuple tys -> g [] (indexedMap (lineAt 0 0.25) tys)
                               , rect [ x "0.25", y "0.25"
-                                     , width "1.5", height "1.5"
+                                     , width "1.5", height (toString (toFloat h * 2 - 0.5))
                                      , rx "0.25", ry "0.25", fill "pink"] []
                               , text_ [ alignmentBaseline "middle"
                                       , textAnchor "middle"
                                       , fontFamily "Verdana"
                                       , strokeWidth "0.02"
-                                      , x "1", y "1", fontSize "0.2"
+                                      , x "1", y (toString h), fontSize "0.2"
                                       , fill "black"] [text name]
                               , case t of
                                   I -> text ""
-                                  _ -> hline 1.75 2 1
-                              ], 2, 2)
+                                  Tuple tys -> g [] (indexedMap (lineAt 1.75 2) tys)
+                              ], 2, 2 * h)
             Comp x y -> let
                     (l, lw, lh) = go x
                     (r, rw, rh) = go y
