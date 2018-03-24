@@ -1,0 +1,11 @@
+graph {
+    out [ style=invis ];
+    {
+        rank = same;
+        pendo1 [ label="pendo" ];
+        pendo2 [ label="pendo" ];
+    }
+    out -- pendo1 [ label="lo pendo" color="cyan" ];
+    pendo1 -- pendo2 [ label="lo se pendo ≌ lo pendo" color="crimson;0.5:cyan" ];
+    pendo2 -- out [ label="lo se pendo" color="crimson" ];
+}
