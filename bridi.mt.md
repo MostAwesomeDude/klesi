@@ -70,6 +70,21 @@ The output of the Lojban parser is a concrete parse tree. We have to reduce it
 to a usable form. First, we'll define a parser to consume the parse tree. It
 will be easier to consume a list of trees rather than a single tree.
 
+Each tree represents a single formula. A formula has a context, which
+introduces the variables, and a term, which is a conjunction of terms, an
+existential quantifier of some new variables over a term, an equality of
+variables, or a primitive relation on variables. This is all represented as
+Lojban syntax.
+
+Logic                 | Lojban
+-----                 | ------
+context               | prenex
+variable of type T    | {da poi T}
+existential of type T | {da poi T}
+conjunction P & Q     | {ge P gi Q}
+equality              | {da du de}
+relation R            | {da R de di}
+
 ```monte
 def reduce(trees) as DeepFrozen:
     def head(tag, parser):
@@ -100,7 +115,10 @@ def reduce(trees) as DeepFrozen:
     def terms := head("terms", decl.oneOrMore())
     def prenex := head("prenex", terms << zohu.optional())
 
-    def sentence := term
+    def bridiTail := head("bridiTail3", brivla + da.zeroOrMore())
+    def bridi := da + bridiTail
+    def sentence := head("sentence", bridi)
+
     def statement := head("statement", prenex + sentence)
     def text := head("text", statement)
 ```
