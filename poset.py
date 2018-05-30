@@ -22,22 +22,43 @@ for line in sys.stdin:
     chain = [w.strip() for w in line.split("≤")]
     addChain(chain)
 
-def isIso(u, v):
-    return v in graph[u] and u in graph[v]
+def tarjan():
+    # This delightful gem:
+    # https://en.wikipedia.org/wiki/Tarjan's_strongly_connected_components_algorithm
+    stack = []
+    indices = {}
+    links = {}
 
-isos = {}
-for u, v in combinations(verts(), 2):
-    if isIso(u, v):
-        if u in isos:
-            s = isos[u]
-            if v in isos:
-                s |= isos[v]
-            isos[v] = s
-        else:
-            isos[u] = isos[v] = set([u, v])
+    rv = []
+
+    def go(v, index=[0]):
+        indices[v] = links[v] = index[0]
+        index[0] += 1
+        stack.append(v)
+
+        for u in graph.get(v, []):
+            if u not in indices:
+                go(u)
+                links[v] = min(links[v], links[u])
+            elif u in stack:
+                links[v] = min(links[v], indices[u])
+
+        if links[v] == indices[v]:
+            s = set()
+            while True:
+                u = stack.pop()
+                s.add(u)
+                if u == v:
+                    break
+            rv.append(s)
+
+    for v in verts():
+        go(v)
+
+    return rv
 
 def incoming(v):
-    return [u for u in graph if v in graph[u]]
+    return set([u for u in graph if v in graph[u]])
 
 def outgoing(v):
     return graph[v]
@@ -48,15 +69,18 @@ def delete(v):
         s.discard(v)
 
 seen = set()
-for iso in isos.itervalues():
-    fs = frozenset(iso)
+components = tarjan()
+for comp in components:
+    if len(comp) < 2:
+        continue
+    fs = frozenset(comp)
     if fs in seen:
         continue
     seen.add(fs)
-    new = " = ".join(fs)
+    new = " = ".join(sorted(fs))
     ins = set()
     outs = set()
-    for v in iso:
+    for v in fs:
         ins.update(incoming(v))
         outs.update(outgoing(v))
         delete(v)
@@ -65,6 +89,15 @@ for iso in isos.itervalues():
     for i in ins:
         graph[i].add(new)
     graph[new] = outs
+
+# Reduce to the transitive reduction.
+for u in verts():
+    us = graph[u]
+    vs = outgoing(u)
+    for v1, v2 in combinations(vs, 2):
+        if v2 in graph[v1]:
+            # u -> v1 and u -> v1 -> v2, so discard u -> v2
+            us.discard(v2)
 
 print "digraph {"
 for k, v in graph.iteritems():

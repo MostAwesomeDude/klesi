@@ -1,14 +1,19 @@
 # http://www.nomachetejuggling.com/files/complexity_zoo.pdf
+# 1 Intro
 P ≤ NP
+# 2 DTIME and NTIME
 DTIME(1) ≤ DLOGTIME ≤ TIME ≤ P
 P ≤ EXPTIME ≤ ALL
 NP ≤ NEXPTIME ≤ ALL
+# 3 PP and BPP
 BPP ≤ coBPP ≤ BPP
 BPP ≤ PP ≤ ALL
 P ≤ BPP
+# 4 RP, coRP, and ZPP
 P ≤ ZPP
 ZPP ≤ RP ≤ NP
 ZPP ≤ coRP ≤ coNP
+# 5 MA and AM
 NP ≤ MA
 BPP ≤ MA
 MA ≤ PP
@@ -16,19 +21,89 @@ MA ≤ AM
 MA ≤ MAexp
 AM ≤ AMexp
 MAexp ≤ AMexp ≤ ALL
+# 6 P/poly
 P ≤ P/poly
 BPP ≤ P/poly
+# NC and AC
 NC ≤ AC ≤ NC
 AC0 ≤ AC
 NC1 ≤ NC
+# 8 BQP and QMA
 P ≤ BPP ≤ BQP ≤ PP
 P ≤ NP ≤ MA ≤ QMA ≤ PP
+# 9 PH
 P ≤ PH
 NP ≤ PH
 coNP ≤ PH
 PH ≤ PSPACE
 # https://complexityzoo.uwaterloo.ca/File:Really-important-inclusions.png
-AC0 ≤ L ≤ NC ≤ P
+AC0 ≤ L ≤ NC
 P/poly ≤ ALL
 P^#P ≤ PSPACE ≤ EXP ≤ ALL
+# Petting Zoo
+# NP
+NP-complete ≤ NP
+coNP-complete ≤ coNP
+# PSPACE
+NP ≤ PSPACE
+PP ≤ PSPACE
+PSPACE ≤ PSPACE/poly
+# EXP
+PSPACE ≤ EXP
+PH ≤ EXP
+EXP ≤ NEXP ≤ ALL
+EXP ≤ EEXP ≤ ALL
+# AC0
+NC0 ≤ AC0
+# NC
+NC0 ≤ NC1
+NC ≤ P
+# L
+NC1 ≤ L ≤ P
+L ≤ NL
+L ≤ SL ≤ L
+L ≤ L/poly
+# #P
+PH ≤ P^#P
+# BPP
 BPP ≤ SZK ≤ AM
+BPP ≤ BPPpath
+MA ≤ BPPpath ≤ PP
+# Savitch's Theorem
+NPSPACE ≤ PSPACE ≤ NPSPACE
+# ALL
+PP ≤ ALL ≤ PP/rpoly ≤ ALL
+PostBQP ≤ ALL ≤ PostBQP/qpoly ≤ ALL
+QIP ≤ ALL ≤ QIP/qpoly ≤ ALL
+MAexp ≤ ALL ≤ MAexp/rpoly ≤ ALL
+# IP
+IP ≤ PSPACE ≤ IP
+# MIP
+MIP ≤ NEXP ≤ MIP
+# QIP
+IP ≤ QIP ≤ IP
+QIP(1) ≤ QIP(3) ≤ QIP ≤ QIP(3)
+QIP ≤ EXP
+# QMA
+BQP ≤ QMA ≤ QIP(1) ≤ QMA
+QMA ≤ PP
+QMA ≤ QMA/qpoly ≤ PSPACE/poly ≤ ALL
+# PostBQP
+PP ≤ PostBQP ≤ PP
+# PR
+ELEMENTARY ≤ PR ≤ R
+# TALLY
+TALLY ≤ SPARSE ≤ ALL
+# SZK
+PZK ≤ SZK ≤ CZK ≤ ALL
+# NC
+# https://en.wikipedia.org/wiki/NC_(complexity)
+NC1 ≤ NC2 ≤ NC
+NC1 ≤ L ≤ NL ≤ AC1 ≤ NC2 ≤ P
+# R
+R ≤ RE ≤ ALL
+R ≤ coRE ≤ ALL
+# REG
+REG ≤ DSPACE ≤ REG ≤ NC1
+# TC0
+ACC0 ≤ TC0 ≤ NC1
