@@ -82,11 +82,12 @@ IP ≤ PSPACE ≤ IP
 MIP ≤ NEXP ≤ MIP
 # QIP
 IP ≤ QIP ≤ IP
-QIP(1) ≤ QIP(3) ≤ QIP ≤ QIP(3)
+QIP(0) ≤ QIP(1) ≤ QIP(2) ≤ QIP(3) ≤ QIP ≤ QIP(3)
 QIP ≤ EXP
+BQP ≤ QIP(0) ≤ BQP
+QMA ≤ QIP(1) ≤ QMA
 # QMA
-BQP ≤ QMA ≤ QIP(1) ≤ QMA
-QMA ≤ PP
+BQP ≤ QMA ≤ PP
 QMA ≤ QMA/qpoly ≤ PSPACE/poly ≤ ALL
 # PostBQP
 PP ≤ PostBQP ≤ PP
