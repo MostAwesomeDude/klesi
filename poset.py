@@ -70,6 +70,8 @@ def delete(v):
 
 seen = set()
 components = tarjan()
+# Loop over SCCs. Tarjan's also returns everything in topo-sorted order, which
+# we'll need to reuse in order to do our transitive-reduction op later.
 for comp in components:
     if len(comp) < 2:
         continue
@@ -90,17 +92,39 @@ for comp in components:
         graph[i].add(new)
     graph[new] = outs
 
-# Reduce to the transitive reduction.
-for u in verts():
-    us = graph[u]
-    vs = outgoing(u)
+topo = [" = ".join(sorted(c)) if len(c) > 1 else list(c)[0] for c in components]
+topo.reverse()
+
+def isReachable(u, v, cache={}):
+    if (u, v) not in cache:
+        cache[u, v] = False
+        for vert in graph[u]:
+            if v == vert or isReachable(vert, v):
+                cache[u, v] = True
+                break
+    return cache[u, v]
+
+# Build the transitive closure first.
+closure = defaultdict(set)
+for u, v in combinations(topo, 2):
+    if isReachable(u, v):
+        closure[u].add(v)
+
+# Now, build the transitive reduction.
+reduced = defaultdict(set)
+for u in topo:
+    vs = closure[u].copy()
     for v1, v2 in combinations(vs, 2):
-        if v2 in graph[v1]:
-            # u -> v1 and u -> v1 -> v2, so discard u -> v2
-            us.discard(v2)
+        if v2 in closure[v1]:
+            # u -> v1 -> v2, so discard u -> v2
+            vs.discard(v2)
+        elif v1 in closure[v2]:
+            # u -> v2 -> v1, so discard u -> v1
+            vs.discard(v1)
+    reduced[u] = vs
 
 print "digraph {"
-for k, v in graph.iteritems():
+for k, v in reduced.iteritems():
     for vert in v:
         print '"%s" -> "%s";' % (k, vert)
 print "}"

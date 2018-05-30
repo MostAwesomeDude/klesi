@@ -91,7 +91,7 @@ QMA ≤ QMA/qpoly ≤ PSPACE/poly ≤ ALL
 # PostBQP
 PP ≤ PostBQP ≤ PP
 # PR
-ELEMENTARY ≤ PR ≤ R
+EXP ≤ ELEMENTARY ≤ PR ≤ R
 # TALLY
 TALLY ≤ SPARSE ≤ ALL
 # SZK
@@ -107,3 +107,16 @@ R ≤ coRE ≤ ALL
 REG ≤ DSPACE ≤ REG ≤ NC1
 # TC0
 ACC0 ≤ TC0 ≤ NC1
+# WP's listing of "Important Complexity Classes"
+# RL
+L ≤ RL ≤ NL
+RL ≤ BPL
+RL ≤ SC ≤ ALL
+# CC
+NL ≤ CC ≤ P
+# APX
+FPTAS ≤ PTAS ≤ APX ≤ NPO
+# Time & Space Hierarchy basics
+P ≤ NP ≤ PSPACE ≤ EXPTIME ≤ NEXPTIME ≤ EXPSPACE ≤ ALL
+# EXP = EXPTIME
+EXP ≤ EXPTIME ≤ EXP
