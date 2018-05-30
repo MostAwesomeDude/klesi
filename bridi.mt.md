@@ -32,6 +32,7 @@ have a mapping instead.
 def arities :Map[Str, Int] := [
     "danlu" => 2,
     "mlatu" => 2,
+    "nibli" => 3,
     "tirxu" => 3,
 ]
 ```
@@ -100,6 +101,11 @@ relation R            | {da R de di}
 
 ```monte
 def reduce(trees) as DeepFrozen:
+    def tracing(label):
+        return def tracer(x):
+            traceln(`trace $label`, x)
+            return x
+
     def head(tag, parser):
         return pk.recurse(pk.equals(tag) >> parser)
     def cmavo(selmaho, parser):
@@ -120,6 +126,15 @@ def reduce(trees) as DeepFrozen:
     def selbri := brivla / tanru
 ```
 
+A proposition in Lojban is a {du'u} abstraction with a formula inside.
+
+```monte
+    def sentence
+    def lo := cmavo("LE", pk.equals("lo"))
+    def duhu := cmavo("NU", pk.equals("du'u"))
+    def prop := head("sumti6", lo + head("tanruUnit2", duhu + sentence))
+```
+
 Variables in regular logic are always explicitly introduced and typed. We'll
 let a variable be a name and a type.
 
@@ -135,11 +150,15 @@ let a variable be a name and a type.
     def terms := head("terms", decl.oneOrMore())
     def prenex := head("prenex", terms << zohu.optional())
 
-    def bridiTail := head("bridiTail3", brivla + da.zeroOrMore())
-    def bridi := (da + bridiTail) % fn [h, [b, t]] {
+    def sumti := prop / da
+
+    def cu := cmavo("CU", pk.equals("cu"))
+
+    def bridiTail := head("bridiTail3", brivla + sumti.zeroOrMore())
+    def bridi := (sumti + (cu.optional() >> bridiTail)) % fn [h, [b, t]] {
         [relation, b, [h] + t]
     }
-    def sentence := head("sentence", bridi)
+    bind sentence := head("sentence", bridi)
 
     def statement := head("statement", prenex + sentence)
     def text := head("text", statement)
@@ -164,6 +183,7 @@ def main(argv, => makeFileResource) as DeepFrozen:
     return when (promiseAllFulfilled(bss)) ->
         def trees := [for bs in (bss) {
             def via (UTF8.decode) via (JSON.decode) tree := bs
+            traceln(tree)
             tree
         }]
         def reduced := reduce(trees)
