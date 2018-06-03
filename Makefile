@@ -1,12 +1,10 @@
-default: jicmu.svg
+default: *.poset.png
 
-%.json: %.jbo
-	<$< jbo2json | jq . >$@
+%.png: %.dot
+	dot -Tpng <$< >$@
 
-jbos := $(patsubst %.jbo,%.json,$(wildcard jicmu/*.jbo))
+%.poset.dot: %.poset
+	python poset.py $<
 
-jicmu.cat: $(jbos) zbasu.mt
-	monte eval zbasu.mt $(jbos) >$@
-
-jicmu.svg: jicmu.cat cat.jq
-	<$< jq -r 'include "cat"; dot' | dot -Tsvg >$@
+%.poset.json: %.poset
+	python poset.py $<

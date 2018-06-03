@@ -9,6 +9,16 @@ class Poset(object):
         self.graph = defaultdict(set)
 
     @classmethod
+    def fromText(cls, text):
+        self = cls()
+        for line in text.split("\n"):
+            if line.startswith("#"):
+                continue
+            chain = [w.strip() for w in line.split("≤")]
+            self.addChain(chain)
+        return self
+
+    @classmethod
     def fromJSON(cls, text):
         labels, packed = json.loads(text)
         self = cls()
@@ -121,12 +131,9 @@ class Poset(object):
         return "\n".join(pieces)
 
 if __name__ == "__main__":
-    p = Poset()
-    for line in sys.stdin:
-        if line.startswith("#"):
-            continue
-        chain = [w.strip() for w in line.split("≤")]
-        p.addChain(chain)
+    filename = sys.argv[-1]
+    with open(filename, "rb") as handle:
+        p = Poset.fromText(handle.read())
 
     seen = set()
     components = p.tarjan()
@@ -162,6 +169,8 @@ if __name__ == "__main__":
     reduced = closure.reduce(topo)
 
     # Build a cheap succinct representation.
-    # print reduced.toJSON(topo)
+    with open(filename + ".json", "wb") as handle:
+        handle.write(reduced.toJSON(topo))
 
-    print reduced.toDOT()
+    with open(filename + ".dot", "wb") as handle:
+        handle.write(reduced.toDOT())
