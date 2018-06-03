@@ -1,0 +1,49 @@
+# Linnaeus, 1758
+C. l. familiaris ≤ C. lupus ≤ Canis ≤ Canini ≤ Canidae ≤ Carnivora ≤ Mammalia ≤ Chordata ≤ Animalia
+# Oken, 1816
+Panthera ≤ Pantherinae ≤ Felidae ≤ Feliforma ≤ Carnivora
+# Linnaeus, 1758
+P. tigris ≤ Panthera
+P. leo ≤ Panthera
+F. s. catus ≤ F. silvestris ≤ Felis ≤ Felinae ≤ Felidae
+H. sapiens ≤ Homo ≤ Hominini ≤ Homininae ≤ Hominidae ≤ Simiiformes ≤ Haplorhini ≤ Primates ≤ Mammalia
+# Blumenbach, 1797
+L. africana ≤ Loxodonta ≤ Elephantidae ≤ Proboscidea ≤ Mammalia
+# Matschie, 1900
+L. cyclotis ≤ Loxodonta
+# Linnaeus, 1758
+E. maximus ≤ Elephas ≤ Elephantidae
+E. a. asinus ≤ E. africanus ≤ Equus ≤ Equidae ≤ Perissodactyla ≤ Mammalia
+E. f. caballus ≤ E. ferus ≤ Equus
+# Erxleben, 1777
+S. s. domesticus ≤ S. scrofa ≤ Sus ≤ Suidae ≤ Artiodactyla ≤ Mammalia
+# Linnaeus, 1758
+O. cuniculus ≤ Oryctolagus ≤ Leporidae ≤ Lagomorpha ≤ Mammalia
+V. vulpes ≤ Vulpes ≤ Canidae
+M. musculus ≤ Mus (subgenus) ≤ Mus ≤ Muridae ≤ Rodentia ≤ Mammalia
+C. dromedarius ≤ Camelus ≤ Camelidae ≤ Artiodactyla
+R. tarandus ≤ Rangifer ≤ Rangiferini ≤ Capreolinae ≤ Cervidae ≤ Artiodactyla
+# Pallas, 1780
+U. americanus ≤ Ursus ≤ Ursidae ≤ Carnivora
+# Berkenhout, 1769
+R. norvegicus ≤ Rattus ≤ Muridae
+# Linnaeus, 1758
+B. taurus ≤ Bos ≤ Bovinae ≤ Bovidae ≤ Artiodactyla
+# Gray, 1825
+Amphibia ≤ Chordata
+# Linnaeus, 1758
+A. anser ≤ Anser ≤ Anserini ≤ Anatidae ≤ Anseriformes ≤ Aves ≤ Chordata
+G. gallus ≤ Gallus ≤ Phasianidae ≤ Galliformes ≤ Aves
+M. gallopavo ≤ Meleagris ≤ Meleagridinae ≤ Phasianidae
+A. platyrhynchos ≤ Anas ≤ Anatidae
+D. plexippus ≤ Danaus ≤ Nymphalidae ≤ Lepidoptera ≤ Insecta ≤ Euarthopoda ≤ Animalia
+# Chamberlin & Ivie, 1935
+L. hesperus ≤ Latrodectus ≤ Theridiidae ≤ Araneomorphae ≤ Araneae ≤ Arachnida ≤ Chelicerata ≤ Euarthopoda
+# Linnaeus, 1761
+F. rufa ≤ Formica ≤ Formicinae ≤ Formicidae ≤ Hymenoptera ≤ Insecta
+# Linnaeus, 1758
+M. domestica ≤ Musca ≤ Muscidae ≤ Schizophora ≤ Diptera ≤ Insecta
+P. americana ≤ Periplaneta ≤ Blattidae ≤ Blattodea ≤ Insecta
+P. irritans ≤ Pulex ≤ Pulicinae ≤ Pulicidae ≤ Siphonaptera ≤ Insecta
+A. mellifera ≤ Apis ≤ Apidae ≤ Hymenoptera
+T. sirtalis ≤ Thamnophis ≤ Colubridae ≤ Serpentes ≤ Squamata ≤ Reptilia ≤ Animalia

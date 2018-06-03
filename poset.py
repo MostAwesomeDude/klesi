@@ -123,6 +123,13 @@ for u in topo:
             vs.discard(v1)
     reduced[u] = vs
 
+# Build a cheap succinct representation.
+acc = 0
+for i, (u, v) in enumerate(combinations(topo, 2)):
+    if v in closure[u]:
+        acc |= 1 << i
+# print >>sys.stderr, len(topo), acc
+
 print "digraph {"
 for k, v in reduced.iteritems():
     for vert in v:
