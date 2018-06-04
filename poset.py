@@ -37,6 +37,11 @@ class Poset(object):
             rv |= v
         return rv
 
+    def iteredges(self):
+        for u in self.graph.keys():
+            for v in self.graph[u]:
+                yield u, v
+
     def tarjan(self):
         # This delightful gem:
         # https://en.wikipedia.org/wiki/Tarjan's_strongly_connected_components_algorithm
@@ -121,19 +126,24 @@ class Poset(object):
                 acc |= 1 << i
         return json.dumps([list(verts), acc])
 
-    def toDOT(self):
+    def toDOT(self, attr=None):
         pieces = []
-        pieces.append("digraph {")
         for k in sorted(self.graph.keys()):
             for v in sorted(self.graph[k]):
-                pieces.append('"%s" -> "%s";' % (k, v))
-        pieces.append("}")
+                if attr is None:
+                    edge = '"%s" -> "%s";' % (k, v)
+                else:
+                    edge = '"%s" -> "%s" [%s];' % (k, v, attr)
+                pieces.append(edge)
         return "\n".join(pieces)
 
-if __name__ == "__main__":
-    filename = sys.argv[-1]
+def getPoset(filename):
     with open(filename, "rb") as handle:
-        p = Poset.fromText(handle.read())
+        return Poset.fromText(handle.read())
+
+def compile(rest):
+    filename, = rest
+    p = getPoset(filename)
 
     seen = set()
     components = p.tarjan()
@@ -173,4 +183,64 @@ if __name__ == "__main__":
         handle.write(reduced.toJSON(topo))
 
     with open(filename + ".dot", "wb") as handle:
+        handle.write("digraph {")
         handle.write(reduced.toDOT())
+        handle.write("}")
+
+def getFunctor(filename):
+    d = {}
+    with open(filename, "rb") as handle:
+        text = handle.read()
+        for line in text.split("\n"):
+            if line.startswith("#") or not line:
+                continue
+            try:
+                src, dest = line.split("→", 1)
+            except ValueError:
+                print "Bad line", line
+                raise
+            d[src.strip()] = dest.strip()
+    return d
+
+def doFunctor(rest):
+    filename, = rest
+    f = getFunctor(filename)
+    src, dst, _ = filename.split(".", 2)
+    a = getPoset(src + ".poset")
+    b = getPoset(dst + ".poset")
+    for u, v in a.iteredges():
+        if not b.isReachable(f[u], f[v]):
+            print u, "≤", v, "but not", f[u], "≤", f[v]
+            raise ValueError((u, v))
+
+    ga = a.toDOT("color=red")
+    gb = b.toDOT("color=blue")
+
+    with open(filename + ".dot", "wb") as handle:
+        handle.write("digraph {")
+        for k, v in f.iteritems():
+            edge = '"%s" -> "%s" [style=dashed];\n' % (k, v)
+            handle.write(edge)
+        handle.write("subgraph {")
+        handle.write(ga)
+        handle.write("}\n")
+        handle.write("subgraph {")
+        handle.write(gb)
+        handle.write("}\n")
+        handle.write("}\n")
+
+    with open(filename + ".json", "wb") as handle:
+        handle.write(json.dumps(f))
+
+if __name__ == "__main__":
+    action = sys.argv[1]
+    rest = sys.argv[2:]
+    if action == "compile":
+        print "Compiling poset", rest
+        compile(rest)
+    elif action == "functor":
+        print "Compiling functor", rest
+        doFunctor(rest)
+    else:
+        print "Don't know how to", action
+        assert False

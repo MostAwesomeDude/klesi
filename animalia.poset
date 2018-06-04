@@ -47,3 +47,7 @@ P. americana ≤ Periplaneta ≤ Blattidae ≤ Blattodea ≤ Insecta
 P. irritans ≤ Pulex ≤ Pulicinae ≤ Pulicidae ≤ Siphonaptera ≤ Insecta
 A. mellifera ≤ Apis ≤ Apidae ≤ Hymenoptera
 T. sirtalis ≤ Thamnophis ≤ Colubridae ≤ Serpentes ≤ Squamata ≤ Reptilia ≤ Animalia
+# Walbaum, 1792
+O. tshawytscha ≤ Oncorhynchus ≤ Salmonidae ≤ Salmoniformes ≤ Actinopterygii ≤ Chordata
+# Linnaeus, 1758
+L. maximus ≤ Limax ≤ Limacinae ≤ Limacidae ≤ Limacoidea ≤ Gastropoda ≤ Mollusca ≤ Animalia
