@@ -1,0 +1,2 @@
+DTIME(n) ≤ DSPACE(n)
+DTIME(n) ≤ NTIME(n)

@@ -7,6 +7,6 @@ in pkgs.stdenv.mkDerivation {
     git jq graphviz gist xclip
     tahoelafs
     # elmPackages.elm-make elmPackages.elm-package elmPackages.elm-repl
-    metamath
+    # metamath
   ];
 }

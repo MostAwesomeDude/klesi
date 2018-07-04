@@ -1,0 +1,2 @@
+DTIME(n) ≤ DTIME(n^2) ≤ DTIME(n^3) ≤ P
+P ≤ P/poly

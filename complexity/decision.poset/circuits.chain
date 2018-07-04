@@ -1,0 +1,3 @@
+SIZE(n) ≤ SIZE(n^2) ≤ SIZE(n^3) ≤ P/poly
+AC0 ≤ NC ≤ P/poly
+AC0 ≤ AC1 ≤ AC2

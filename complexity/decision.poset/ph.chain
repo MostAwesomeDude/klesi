@@ -1,0 +1,6 @@
+P ≤ Σ1P ≤ Σ2P ≤ Σ3P ≤ PH
+P ≤ Π1P ≤ Π2P ≤ Π3P ≤ PH
+NP ≤ Σ1P ≤ NP
+co-NP ≤ Π1P ≤ co-NP
+NP ≤ Π2P ≤ Σ3P ≤ PH
+co-NP ≤ Σ2P ≤ Π3P ≤ PH

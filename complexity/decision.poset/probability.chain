@@ -1,0 +1,7 @@
+P ≤ BPP ≤ EXP
+BPP ≤ PSPACE
+P ≤ RP ≤ BPP ≤ PP
+RP ≤ NP ≤ PP ≤ PSPACE
+P ≤ ZPP ≤ RP
+ZPP ≤ co-RP ≤ BPP
+BPP ≤ P/poly

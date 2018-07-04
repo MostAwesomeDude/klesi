@@ -1,0 +1,4 @@
+NP ≤ AP ≤ PSPACE
+PSPACE ≤ AP
+NL ≤ AL ≤ P
+P ≤ AL

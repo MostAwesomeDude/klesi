@@ -1,0 +1,4 @@
+P → NP
+NP → NP
+co-NP → Σ2P
+PH → PH
