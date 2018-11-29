@@ -1,4 +1,4 @@
-:- module(jicmu, [bridi/2]).
+:- module(jicmu, [bridi/2, nibli/3]).
 :- use_module(library(chr)).
 
 % This isn't builtin?
@@ -16,7 +16,8 @@
 % Converted selbri.
     se(selbri) ; te(selbri) ;
 % Logical connectives.
-    ja(selbri, selbri) ; je(selbri, selbri).
+    ja(selbri, selbri) ; je(selbri, selbri) ;
+    na(selbri).
 
 :- chr_type sumti ---> koha ; kohe ; li(?int).
 
@@ -28,11 +29,21 @@
 % further speedups.
 id @ bridi(B2, B3) \ bridi(B2, B3) <=> true.
 
+% Logical connectives. First, categorical products.
+je @ bridi(je(Buha, Buhe), B3) <=> bridi(Buha, B3), bridi(Buhe, B3).
+% And categorical coproducts. Note that this elimination relies implicitly on
+% backtracking, so it is only portable to CHR with search.
+ja @ bridi(ja(Buha, Buhe), B3) <=> bridi(Buha, B3); bridi(Buhe, B3).
+
+% Constructive negation. We don't grant LEM, and we can't grant a useful ex
+% falso quod libet at this level either. We can at least give contradiction.
+contradiction @ bridi(na(B2), B3), bridi(B2, B3) <=> false.
+
 % SE conversion.
 se @ bridi(se(B2), [T1, T2 | Ts]) <=> bridi(B2, [T2, T1 | Ts]).
 te @ bridi(te(B2), [T1, T2, T3 | Ts]) <=> bridi(B2, [T3, T2, T1 | Ts]).
 
-% Absorb {du}.
+% Absorb {du}. All of the terbri will be unified.
 unify_all([X1, X2 | Xs]) :- X1 = X2, unify_all([X2 | Xs]).
 unify_all([_]) :- true.
 du @ bridi(du, B3) <=> unify_all(B3).
@@ -46,8 +57,6 @@ cinfo @ bridi(cinfo, B3) ==> bridi(mlatu, B3).
 mlatu @ bridi(mlatu, B3) ==> bridi(mabru, B3).
 mabru @ bridi(mabru, B3) ==> bridi(danlu, B3).
 
-% Logical connectives. First, categorical products.
-je @ bridi(je(Buha, Buhe), B3) <=> bridi(Buha, B3), bridi(Buhe, B3).
-% And categorical coproducts. Note that this elimination relies implicitly on
-% backtracking, so it is only portable to CHR with search.
-ja @ bridi(ja(Buha, Buhe), B3) <=> bridi(Buha, B3); bridi(Buhe, B3).
+% Generalized deduction at runtime.
+:- chr_constraint nibli(?int, ?selbri, ?selbri).
+mp @ bridi(Buha, Ts), nibli(Arity, Buha, Buhe) ==> length(Ts, Arity), bridi(Buhe, Ts).
