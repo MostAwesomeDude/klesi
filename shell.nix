@@ -8,5 +8,6 @@ in pkgs.stdenv.mkDerivation {
     tahoelafs
     # elmPackages.elm-make elmPackages.elm-package elmPackages.elm-repl
     # metamath
+    swiProlog
   ];
 }
